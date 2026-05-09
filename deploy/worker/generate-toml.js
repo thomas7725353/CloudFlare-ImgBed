@@ -8,6 +8,7 @@
  *   KV_NAMESPACE_ID  - KV 命名空间 ID
  *   R2_BUCKET_NAME   - R2 存储桶名称
  *   WORKER_VARS      - JSON 格式的业务环境变量
+ *   CUSTOM_DOMAIN    - 可选，Workers custom domain，例如 share.gorustai.com
  */
 
 import { writeFileSync } from 'fs';
@@ -19,6 +20,7 @@ const outputPath = join(__dirname, 'wrangler.toml');
 
 const env = process.env;
 const name = env.WORKER_NAME || 'cloudflare-imgbed';
+const customDomain = env.CUSTOM_DOMAIN;
 
 let toml = `name = "${name}"
 main = "index.js"
@@ -55,6 +57,15 @@ if (env.R2_BUCKET_NAME) {
 [[r2_buckets]]
 binding = "img_r2"
 bucket_name = "${env.R2_BUCKET_NAME}"
+`;
+}
+
+// Workers Custom Domain
+if (customDomain) {
+    toml += `
+[[routes]]
+pattern = "${String(customDomain).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"
+custom_domain = true
 `;
 }
 
