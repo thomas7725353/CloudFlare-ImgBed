@@ -4,6 +4,8 @@ import { retryFailedChunks, cleanupFailedMultipartUploads, checkChunkUploadStatu
 import { S3Client, CompleteMultipartUploadCommand } from "@aws-sdk/client-s3";
 import { getDatabase } from '../utils/databaseAdapter.js';
 
+const DEFAULT_FILE_TYPE = 'application/octet-stream';
+
 // 处理分块合并
 export async function handleChunkMerge(context) {
     const { request, env, url, waitUntil } = context;
@@ -32,6 +34,7 @@ export async function handleChunkMerge(context) {
         }
 
         const sessionInfo = JSON.parse(sessionData);
+        originalFileType = originalFileType || sessionInfo.originalFileType || DEFAULT_FILE_TYPE;
 
         // 验证会话信息
         if (sessionInfo.originalFileName !== originalFileName ||

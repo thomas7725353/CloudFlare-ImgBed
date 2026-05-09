@@ -5,6 +5,8 @@ import { DiscordAPI } from '../utils/storage/discordAPI';
 import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, AbortMultipartUploadCommand } from "@aws-sdk/client-s3";
 import { getDatabase, checkDatabaseConfig } from '../utils/databaseAdapter.js';
 
+const DEFAULT_FILE_TYPE = 'application/octet-stream';
+
 // 初始化分块上传
 export async function initializeChunkedUpload(context) {
     const { request, env, url } = context;
@@ -15,10 +17,10 @@ export async function initializeChunkedUpload(context) {
         const formdata = await request.formData();
 
         const originalFileName = formdata.get('originalFileName');
-        const originalFileType = formdata.get('originalFileType');
+        const originalFileType = formdata.get('originalFileType') || DEFAULT_FILE_TYPE;
         const totalChunks = parseInt(formdata.get('totalChunks'));
 
-        if (!originalFileName || !originalFileType || !totalChunks) {
+        if (!originalFileName || !totalChunks) {
             return createResponse('Error: Missing initialization parameters', { status: 400 });
         }
 
@@ -96,9 +98,9 @@ export async function handleChunkUpload(context) {
         const totalChunks = parseInt(formdata.get('totalChunks'));
         const uploadId = formdata.get('uploadId');
         const originalFileName = formdata.get('originalFileName');
-        const originalFileType = formdata.get('originalFileType');
+        const originalFileType = formdata.get('originalFileType') || DEFAULT_FILE_TYPE;
 
-        if (!chunk || chunkIndex === null || !totalChunks || !uploadId || !originalFileName || !originalFileType) {
+        if (!chunk || chunkIndex === null || !totalChunks || !uploadId || !originalFileName) {
             return createResponse('Error: Missing chunk upload parameters', { status: 400 });
         }
 

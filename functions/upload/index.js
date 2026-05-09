@@ -14,6 +14,8 @@ import { WebDAVAPI } from "../utils/storage/webdavAPI";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getDatabase } from '../utils/databaseAdapter.js';
 
+const DEFAULT_FILE_TYPE = 'application/octet-stream';
+
 
 export async function onRequest(context) {  // Contents of context object
     const { request, env, params, waitUntil, next, data } = context;
@@ -133,7 +135,7 @@ async function processFileUpload(context, formdata = null) {
     // 获取文件信息
     const time = new Date().getTime();
     const file = formdata.get('file');
-    const fileType = file.type;
+    const fileType = file.type || DEFAULT_FILE_TYPE;
     let fileName = file.name;
     const fileSizeBytes = file.size; // 文件大小，单位字节
     const fileSize = (fileSizeBytes / 1024 / 1024).toFixed(2); // 文件大小，单位MB
@@ -383,7 +385,7 @@ async function uploadFileToS3(context, fullId, metadata, returnLink) {
             Bucket: bucketName,
             Key: s3FileName,
             Body: uint8Array, // 直接使用 Blob
-            ContentType: file.type
+            ContentType: file.type || metadata.FileType || DEFAULT_FILE_TYPE
         };
 
         // 执行上传
