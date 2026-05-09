@@ -9,6 +9,7 @@
 
 // --- 中间件（自动生成） ---
 import * as mw_api from '../../functions/api/_middleware.js';
+import * as mw_api_files from '../../functions/api/files/_middleware.js';
 import * as mw_api_manage from '../../functions/api/manage/_middleware.js';
 import * as mw_dav from '../../functions/dav/_middleware.js';
 import * as mw_file from '../../functions/file/_middleware.js';
@@ -39,6 +40,7 @@ import * as apiAuthLogout from '../../functions/api/auth/logout.js';
 import * as apiAuthResetAuth from '../../functions/api/auth/resetAuth.js';
 import * as apiAuthSessionCheck from '../../functions/api/auth/sessionCheck.js';
 import * as apiBingWallpaper_index from '../../functions/api/bing/wallpaper/index.js';
+import * as apiFilesList from '../../functions/api/files/list.js';
 import * as apiManageApiTokens from '../../functions/api/manage/apiTokens.js';
 import * as apiManageList from '../../functions/api/manage/list.js';
 import * as apiManageQuota from '../../functions/api/manage/quota.js';
@@ -51,6 +53,7 @@ import * as apiFetchRes from '../../functions/api/fetchRes.js';
 import * as apiUserConfig from '../../functions/api/userConfig.js';
 import * as random_index from '../../functions/random/index.js';
 import * as upload_index from '../../functions/upload/index.js';
+import * as apiFilesDeleteCatchAll from '../../functions/api/files/delete/[[path]].js';
 import * as apiManageBlockCatchAll from '../../functions/api/manage/block/[[path]].js';
 import * as apiManageDeleteCatchAll from '../../functions/api/manage/delete/[[path]].js';
 import * as apiManageMetadataCatchAll from '../../functions/api/manage/metadata/[[path]].js';
@@ -88,6 +91,7 @@ const routes = [
     { path: '/api/auth/resetAuth', module: apiAuthResetAuth, middlewares: [mw_api] },
     { path: '/api/auth/sessionCheck', module: apiAuthSessionCheck, middlewares: [mw_api] },
     { path: '/api/bing/wallpaper', module: apiBingWallpaper_index, middlewares: [mw_api] },
+    { path: '/api/files/list', module: apiFilesList, middlewares: [mw_api, mw_api_files] },
     { path: '/api/manage/apiTokens', module: apiManageApiTokens, middlewares: [mw_api, mw_api_manage] },
     { path: '/api/manage/list', module: apiManageList, middlewares: [mw_api, mw_api_manage] },
     { path: '/api/manage/quota', module: apiManageQuota, middlewares: [mw_api, mw_api_manage] },
@@ -100,6 +104,7 @@ const routes = [
     { path: '/api/userConfig', module: apiUserConfig, middlewares: [mw_api] },
     { path: '/random', module: random_index, middlewares: [mw_random] },
     { path: '/upload', module: upload_index, middlewares: [mw_upload] },
+    { path: '/api/files/delete/', module: apiFilesDeleteCatchAll, middlewares: [mw_api, mw_api_files], catchAll: true },
     { path: '/api/manage/block/', module: apiManageBlockCatchAll, middlewares: [mw_api, mw_api_manage], catchAll: true },
     { path: '/api/manage/delete/', module: apiManageDeleteCatchAll, middlewares: [mw_api, mw_api_manage], catchAll: true },
     { path: '/api/manage/metadata/', module: apiManageMetadataCatchAll, middlewares: [mw_api, mw_api_manage], catchAll: true },
