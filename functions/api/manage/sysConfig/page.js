@@ -1,5 +1,9 @@
 import { getDatabase } from '../../../utils/databaseAdapter.js';
 
+function envFlag(value) {
+    return value === true || value === 'true' || value === '1';
+}
+
 export async function onRequest(context) {
     // 页面设置相关，GET方法读取设置，POST方法保存设置
     const {
@@ -312,6 +316,15 @@ export async function getPageConfig(db, env) {
         const index = config.findIndex(x => x.id === item.id)
         if (index !== -1) {
             config[index].value = item.value
+        }
+    }
+
+    // Allow deployments to force-hide the upstream credit footer without
+    // requiring a production database edit.
+    if (envFlag(env.DISABLE_FOOTER)) {
+        const index = config.findIndex(x => x.id === 'disableFooter')
+        if (index !== -1) {
+            config[index].value = true
         }
     }
 
